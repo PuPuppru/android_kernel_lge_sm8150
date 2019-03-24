@@ -133,3 +133,4 @@ kernel/configs/android-*.cfg
 /pri/tools/boot/new-boot.img
 /pri/tools/gcc
 /pri/tools/clang
+linux-stable.sh
