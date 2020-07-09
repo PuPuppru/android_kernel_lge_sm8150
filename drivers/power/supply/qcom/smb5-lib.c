@@ -5740,13 +5740,6 @@ enum alarmtimer_restart smblib_lpd_recheck_timer(struct alarm *alarm,
 				BC1P2_SRC_DETECT_BIT, BC1P2_SRC_DETECT_BIT);
 	}
 
-	rc = smblib_write(chg, USBIN_ADAPTER_ALLOW_CFG_REG, USBIN_ADAPTER_ALLOW_5V_OR_9V_TO_12V);
-	if (rc < 0) {
-		pr_err("Couldn't write 0x%02x to USBIN_ADAPTER_ALLOW_CFG rc=%d\n",
-	                        USBIN_ADAPTER_ALLOW_5V_OR_9V_TO_12V, rc);
-                return rc;
-        }
-
 	smblib_dbg(chg, PR_MISC, "LPD_STAGE_NONE\n");
 	smblib_dbg(chg, PR_MISC, "LPD_NONE\n");
 	if (!chg->pd_active)
@@ -5762,17 +5755,6 @@ static int smblib_set_moisture_detected(struct smb_charger *chg)
 	int rc = 0;
 
 	smblib_dbg(chg, PR_MISC, "LPD_STAGE_COMMIT\n");
-
-	if (*chg->lpd_ux) {
-		rc = smblib_write(chg, USBIN_ADAPTER_ALLOW_CFG_REG,
-				USBIN_ADAPTER_ALLOW_12V);
-		if (rc < 0) {
-			pr_err("Couldn't write 0x%02x to "
-					"USBIN_ADAPTER_ALLOW_CFG rc=%d\n",
-					USBIN_ADAPTER_ALLOW_12V, rc);
-			return rc;
-		}
-	}
 
 	if (*chg->lpd_apsd_disable) {
 		smblib_masked_write(chg, USBIN_OPTIONS_1_CFG_REG,
@@ -7595,12 +7577,7 @@ static int smblib_role_switch_failure(struct smb_charger *chg, int mode)
 	if (pval.intval) {
 		if (mode == DUAL_ROLE_PROP_MODE_DFP)
 			smblib_notify_device_mode(chg, true);
-	} else {
-		if (mode == DUAL_ROLE_PROP_MODE_UFP)
-			smblib_notify_usb_host(chg, true);
 	}
-	smblib_dbg(chg, PR_MISC, "Role reversal is failed for %s, notify usb",
-						mode ? "DFP" : "UFP");
 
 	return rc;
 }
@@ -7623,10 +7600,6 @@ static void smblib_dual_role_check_work(struct work_struct *work)
 			if (rc < 0)
 				pr_err("Failed to set DRP mode, rc=%d\n", rc);
 
-			rc = smblib_role_switch_failure(chg,
-						DUAL_ROLE_PROP_MODE_UFP);
-			if (rc < 0)
-				pr_err("Failed to role switch rc=%d\n", rc);
 		}
 		chg->pr_swap_in_progress = false;
 		break;

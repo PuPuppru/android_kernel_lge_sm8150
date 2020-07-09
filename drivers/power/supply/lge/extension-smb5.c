@@ -1109,7 +1109,6 @@ static int moisture_mode_on(struct smb_charger* chg) {
 				USBIN_ADAPTER_ALLOW_12V, rc);
 			return rc;
 		}
-
 	// 2. disable apsd
 		smblib_masked_write(chg, USBIN_OPTIONS_1_CFG_REG, BC1P2_SRC_DETECT_BIT, 0);
 
@@ -1163,7 +1162,6 @@ static int moisture_mode_off(struct smb_charger* chg) {
 			USBIN_ADAPTER_ALLOW_5V_OR_9V_TO_12V, rc);
 		return rc;
 	}
-
 	return 0;
 }
 

@@ -10,7 +10,6 @@
 
 #include "../qcom/smb5-reg.h"
 #include "../qcom/smb5-lib.h"
-#include "../qcom/fg-core.h"
 #include "veneer-primitives.h"
 #ifdef CONFIG_LGE_USB_SBU_SWITCH
 #include <linux/usb/lge_sbu_switch.h>
@@ -429,14 +428,6 @@ static void wa_charging_for_unknown_cable_main(struct work_struct *unused) {
 	}
 
 	if (apsd_done && !delayed_work_pending(&wa_charging_without_cc_dwork)) {
-		rc = smblib_write(chg, USBIN_ADAPTER_ALLOW_CFG_REG,
-				USBIN_ADAPTER_ALLOW_5V);
-		if (rc < 0) {
-			pr_wa("Couldn't write 0x%02x to"
-					" USBIN_ADAPTER_ALLOW_CFG_REG rc=%d\n",
-					USBIN_ADAPTER_ALLOW_CFG_REG, rc);
-			goto out_charging_for_unknown;
-		}
 		vbus_valid = !power_supply_get_property(chg->usb_psy,
 				POWER_SUPPLY_PROP_PRESENT, &val)
 				? !!val.intval : false;
@@ -1298,9 +1289,10 @@ void wa_disable_hvdcp_with_factory_trigger(struct smb_charger *chg) {
 
 	if (is_usb_configured && !disabled_hvdcp
 			&& chg->real_charger_type == POWER_SUPPLY_TYPE_USB_DCP
-			&& chg->typec_mode == POWER_SUPPLY_TYPEC_SOURCE_DEBUG_ACCESSORY_DEFAULT) {
+			&& chg->typec_mode == POWER_SUPPLY_TYPEC_SINK_DEBUG_ACCESSORY) {
 		disabled_hvdcp = true;
 		smblib_hvdcp_detect_enable(chg, false);
+		pr_wa("APSD rerun\n");
 		wa_command_apsd(chg);
 	}
 }
