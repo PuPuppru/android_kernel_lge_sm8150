@@ -131,5 +131,3 @@ kernel/configs/android-*.cfg
 /pri/tools/boot/Image.gz-dtb
 /pri/tools/boot/kernel
 /pri/tools/boot/new-boot.img
-/pri/tools/gcc
-/pri/tools/clang
