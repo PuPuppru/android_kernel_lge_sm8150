@@ -878,7 +878,6 @@ static void __arm_smmu_free_bitmap(unsigned long *map, int idx)
 
 static int arm_smmu_prepare_clocks(struct arm_smmu_power_resources *pwr)
 {
-<<<<<<< HEAD
 	int i, ret = 0;
 
 	for (i = 0; i < pwr->num_clocks; ++i) {
@@ -888,16 +887,6 @@ static int arm_smmu_prepare_clocks(struct arm_smmu_power_resources *pwr)
 			while (i--)
 				clk_unprepare(pwr->clocks[i]);
 			break;
-=======
-	unsigned int spin_cnt, delay;
-
-	writel_relaxed(QCOM_DUMMY_VAL, sync);
-	for (delay = 1; delay < TLB_LOOP_TIMEOUT; delay *= 2) {
-		for (spin_cnt = TLB_SPIN_COUNT; spin_cnt > 0; spin_cnt--) {
-			if (!(readl_relaxed(status) & sTLBGSTATUS_GSACTIVE))
-				return;
-			cpu_relax();
->>>>>>> d0365cb72070... iommu/arm-smmu: Avoid constant zero in TLBI writes
 		}
 	}
 	return ret;
@@ -1292,7 +1281,7 @@ static int __arm_smmu_tlb_sync(struct arm_smmu_device *smmu,
 {
 	unsigned int spin_cnt, delay;
 
-	writel_relaxed(0, sync);
+	writel_relaxed(QCOM_DUMMY_VAL, sync);
 	for (delay = 1; delay < TLB_LOOP_TIMEOUT; delay *= 2) {
 		for (spin_cnt = TLB_SPIN_COUNT; spin_cnt > 0; spin_cnt--) {
 			if (!(readl_relaxed(status) & sTLBGSTATUS_GSACTIVE))
@@ -4041,14 +4030,8 @@ static int qsmmuv2_wait_for_halt(struct arm_smmu_device *smmu)
 		return -EBUSY;
 	}
 
-<<<<<<< HEAD
 	return 0;
 }
-=======
-	/* Invalidate the TLB, just in case */
-	writel_relaxed(QCOM_DUMMY_VAL, gr0_base + ARM_SMMU_GR0_TLBIALLH);
-	writel_relaxed(QCOM_DUMMY_VAL, gr0_base + ARM_SMMU_GR0_TLBIALLNSNH);
->>>>>>> d0365cb72070... iommu/arm-smmu: Avoid constant zero in TLBI writes
 
 static int __qsmmuv2_halt(struct arm_smmu_device *smmu, bool wait)
 {
@@ -4264,8 +4247,8 @@ static void arm_smmu_device_reset(struct arm_smmu_device *smmu)
 	}
 
 	/* Invalidate the TLB, just in case */
-	writel_relaxed(0, gr0_base + ARM_SMMU_GR0_TLBIALLH);
-	writel_relaxed(0, gr0_base + ARM_SMMU_GR0_TLBIALLNSNH);
+	writel_relaxed(QCOM_DUMMY_VAL, gr0_base + ARM_SMMU_GR0_TLBIALLH);
+	writel_relaxed(QCOM_DUMMY_VAL, gr0_base + ARM_SMMU_GR0_TLBIALLNSNH);
 
 	reg = readl_relaxed(ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
 
