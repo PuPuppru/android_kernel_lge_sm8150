@@ -204,11 +204,10 @@ static unsigned int msm_geni_serial_tx_empty(struct uart_port *port);
 static int msm_geni_serial_power_on(struct uart_port *uport);
 static void msm_geni_serial_power_off(struct uart_port *uport);
 static int msm_geni_serial_poll_bit(struct uart_port *uport,
-				int offset, int bit_field, bool set);
+				int offset, u32 bit_field, bool set);
 #ifdef CONFIG_LGE_USB_DEBUGGER
 int msm_geni_serial_get_uart_console_status(void);
 #endif
-				int offset, u32 bit_field, bool set);
 static void msm_geni_serial_stop_rx(struct uart_port *uport);
 static int msm_geni_serial_runtime_resume(struct device *dev);
 static int msm_geni_serial_runtime_suspend(struct device *dev);
@@ -3248,3 +3247,4 @@ module_exit(msm_geni_serial_exit);
 MODULE_DESCRIPTION("Serial driver for GENI based QTI serial cores");
 MODULE_LICENSE("GPL v2");
 MODULE_ALIAS("tty:msm_geni_geni_serial");
+
