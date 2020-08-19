@@ -131,3 +131,5 @@ kernel/configs/android-*.cfg
 /pri/tools/boot/Image.gz-dtb
 /pri/tools/boot/kernel
 /pri/tools/boot/new-boot.img
+/scripts/gcc-wrapper.py
+/pri/build.sh
